@@ -5,7 +5,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.testng.Assert;
 import org.testng.annotations.Test;
@@ -46,14 +45,21 @@ public class RestAssured_TestCases_PL1 {
 		String status = customResponse.getStatus();
 		Assert.assertEquals(status, "OK", "Status should be OK.");
 
-		// Validate that each stock entry has non-null fields
-		List<Map<String, Object>> results = customResponse.getListResults();
-		Assert.assertFalse(results.isEmpty(), "Results should not be empty.");
-		results.forEach(stock -> {
-			Assert.assertNotNull(stock.get("ItemId"), "ItemId should not be null.");
-			Assert.assertNotNull(stock.get("ItemName"), "ItemName should not be null.");
-			Assert.assertNotNull(stock.get("GenericName"), "GenericName should not be null.");
-		});
+		// Validate that ItemId, ItemName, and GenericName are not null
+		List<Object> itemIds = customResponse.getItemIds();
+		List<Object> itemNames = customResponse.getItemNames();
+		List<Object> genericNames = customResponse.getGenericNames();
+
+		Assert.assertFalse(itemIds.isEmpty(), "ItemId list should not be empty.");
+		Assert.assertFalse(itemNames.isEmpty(), "ItemName list should not be empty.");
+		Assert.assertFalse(genericNames.isEmpty(), "GenericName list should not be empty.");
+
+		// Validate that none of the fields are null for each entry
+		for (int i = 0; i < itemIds.size(); i++) {
+			Assert.assertNotNull(itemIds.get(i), "ItemId at index " + i + " should not be null.");
+			Assert.assertNotNull(itemNames.get(i), "ItemName at index " + i + " should not be null.");
+			Assert.assertNotNull(genericNames.get(i), "GenericName at index " + i + " should not be null.");
+		}
 
 		// Print response for debugging
 		System.out.println("All Stocks Response:");
@@ -82,11 +88,10 @@ public class RestAssured_TestCases_PL1 {
 		String status = customResponse.getStatus();
 		Assert.assertEquals(status, "OK", "Status should be OK.");
 
-		// Validate Results fields
-		Map<String, Object> results = customResponse.getMapResults();
-		Assert.assertNotNull(results.get("StoreId"), "StoreId should not be null.");
-		Assert.assertNotNull(results.get("Category"), "Category should not be null.");
-		Assert.assertNotNull(results.get("IsActive"), "IsActive should not be null.");
+		// Validate StoreId, Category, and IsActive fields are not null
+		Assert.assertNotNull(customResponse.getStoreId(), "StoreId should not be null.");
+		Assert.assertNotNull(customResponse.getCategory(), "Category should not be null.");
+		Assert.assertNotNull(customResponse.getIsActive(), "IsActive should not be null.");
 
 		// Print the response
 		System.out.println("Main Store Response:");
@@ -121,19 +126,26 @@ public class RestAssured_TestCases_PL1 {
 		String status = customResponse.getStatus();
 		Assert.assertEquals(status, "OK", "Status should be OK.");
 
-		// Validate requisition list
-		List<Map<String, Object>> requisitionList = customResponse.getListResults();
-		Assert.assertFalse(requisitionList.isEmpty(), "Requisition list should not be empty.");
+		// Validate requisition list fields
+		List<Object> requisitionNos = customResponse.getItemIds();
+		List<Object> requisitionStatuses = customResponse.getItemNames();
+		List<Object> requisitionIds = customResponse.getGenericNames();
 
-		Set<Integer> uniqueRequisitionIds = requisitionList.stream().map(req -> (Integer) req.get("RequisitionId"))
-				.collect(Collectors.toSet());
+		// Validate that requisition fields are not null
+		Assert.assertFalse(requisitionNos.isEmpty(), "RequisitionNos list should not be empty.");
+		Assert.assertFalse(requisitionStatuses.isEmpty(), "RequisitionStatuses list should not be empty.");
+		Assert.assertFalse(requisitionIds.isEmpty(), "RequisitionIds list should not be empty.");
 
-		Assert.assertEquals(uniqueRequisitionIds.size(), requisitionList.size(), "Requisition IDs should be unique.");
+		// Validate that requisition IDs are unique
+		Set<Object> uniqueRequisitionIds = new HashSet<>(requisitionIds);
+		Assert.assertEquals(uniqueRequisitionIds.size(), requisitionIds.size(), "Requisition IDs should be unique.");
 
-		requisitionList.forEach(requisition -> {
-			Assert.assertNotNull(requisition.get("RequistionNo"), "RequistionNo should not be null.");
-			Assert.assertNotNull(requisition.get("RequisitionStatus"), "RequisitionStatus should not be null.");
-		});
+		// Validate that RequisitionNo and RequisitionStatus are not null
+		for (int i = 0; i < requisitionNos.size(); i++) {
+			Assert.assertNotNull(requisitionNos.get(i), "RequisitionNo at index " + i + " should not be null.");
+			Assert.assertNotNull(requisitionStatuses.get(i),
+					"RequisitionStatus at index " + i + " should not be null.");
+		}
 
 		// Print the response
 		System.out.println("Requisition Response:");
@@ -164,14 +176,23 @@ public class RestAssured_TestCases_PL1 {
 		String status = customResponse.getStatus();
 		Assert.assertEquals(status, "OK", "Status should be OK.");
 
-		// Validate Results fields
-		List<Map<String, Object>> results = customResponse.getListResults();
-		Assert.assertFalse(results.isEmpty(), "Results should not be empty.");
-		results.forEach(patient -> {
-			Assert.assertNotNull(patient.get("PatientId"), "PatientId should not be null.");
-			Assert.assertNotNull(patient.get("HospitalNo"), "HospitalNo should not be null.");
-			Assert.assertNotNull(patient.get("PatientVisitId"), "PatientVisitId should not be null.");
-		});
+		// Validate PatientId, HospitalNo, and PatientVisitId fields are not null
+		List<Object> patientIds = customResponse.getItemIds();
+		List<Object> hospitalNos = customResponse.getItemNames();
+		List<Object> patientVisitIds = customResponse.getGenericNames();
+
+		// Validate that none of the fields are null
+		Assert.assertFalse(patientIds.isEmpty(), "PatientIds list should not be empty.");
+		Assert.assertFalse(hospitalNos.isEmpty(), "HospitalNos list should not be empty.");
+		Assert.assertFalse(patientVisitIds.isEmpty(), "PatientVisitIds list should not be empty.");
+
+		// Validate that PatientId, HospitalNo, and PatientVisitId are not null for each
+		// patient
+		for (int i = 0; i < patientIds.size(); i++) {
+			Assert.assertNotNull(patientIds.get(i), "PatientId at index " + i + " should not be null.");
+			Assert.assertNotNull(hospitalNos.get(i), "HospitalNo at index " + i + " should not be null.");
+			Assert.assertNotNull(patientVisitIds.get(i), "PatientVisitId at index " + i + " should not be null.");
+		}
 
 		// Print the response
 		System.out.println("Patient Consumptions Response:");
@@ -205,17 +226,10 @@ public class RestAssured_TestCases_PL1 {
 		String status = customResponse.getStatus();
 		Assert.assertEquals(status, "OK", "Status should be OK.");
 
-		// Validate Results fields
-		Map<String, Object> results = customResponse.getMapResults();
-		Map<String, Object> patientConsumption = (Map<String, Object>) results.get("PatientConsumption");
-
-		// Null checks for PatientConsumption
-		Assert.assertNotNull(patientConsumption, "'PatientConsumption' section is missing in Results.");
-
-		// Field validations
-		Assert.assertNotNull(patientConsumption.get("PatientName"), "PatientName should not be null.");
-		Assert.assertNotNull(patientConsumption.get("HospitalNo"), "HospitalNo should not be null.");
-		Assert.assertNotNull(patientConsumption.get("StoreId"), "StoreId should not be null.");
+		// Validate PatientName, HospitalNo, and StoreId fields are not null
+		Assert.assertNotNull(customResponse.getStoreId(), "PatientName should not be null.");
+		Assert.assertNotNull(customResponse.getCategory(), "HospitalNo should not be null.");
+		Assert.assertNotNull(customResponse.getIsActive(), "StoreId should not be null.");
 
 		// Print the response
 		System.out.println("Patient Consumption Info Response:");
@@ -235,13 +249,18 @@ public class RestAssured_TestCases_PL1 {
 				"getBillingSchemeBySchemeId", List.of("given", "then", "extract", "response"));
 		Assert.assertTrue(isValidationSuccessful, "getBillingSchemeBySchemeId method validation failed.");
 
+		// Validate response structure
+		Assert.assertTrue(TestCodeValidator.validateResponseFields("getBillingSchemeBySchemeId", customResponse),
+				"Must have all required fields in the response.");
+
 		// Validate response
 		Assert.assertEquals(customResponse.getStatusCode(), 200, "Status code should be 200.");
 		Assert.assertEquals(customResponse.getStatus(), "OK", "Status should be OK.");
 
-		Map<String, Object> results = customResponse.getMapResults();
-		Assert.assertNotNull(results.get("SchemeCode"), "SchemeCode should not be null.");
-		Assert.assertEquals(String.valueOf(results.get("SchemeId")), schemeId,
+		// Validate the extracted fields
+		Assert.assertNotNull(customResponse.getStoreId(), "SchemeCode should not be null.");
+		Assert.assertNotNull(customResponse.getCategory(), "SchemeName should not be null.");
+		Assert.assertEquals(String.valueOf(customResponse.getIsActive()), schemeId,
 				"SchemeId should match the requested value.");
 
 		System.out.println("Billing Scheme Response:");
@@ -261,14 +280,18 @@ public class RestAssured_TestCases_PL1 {
 				"getBillingSummaryByPatientId", List.of("given", "then", "extract", "response"));
 		Assert.assertTrue(isValidationSuccessful, "getBillingSummaryByPatientId method validation failed.");
 
-		// Validate response
+		// Validate response structure
+		Assert.assertTrue(TestCodeValidator.validateResponseFields("getBillingSummaryByPatientId", customResponse),
+				"Must have all required fields in the response.");
+
+		// Validate response status code
 		Assert.assertEquals(customResponse.getStatusCode(), 200, "Status code should be 200.");
 		Assert.assertEquals(customResponse.getStatus(), "OK", "Status should be OK.");
 
-		Map<String, Object> results = customResponse.getMapResults();
-		Assert.assertEquals(String.valueOf(results.get("PatientId")), patientId,
+		// Validate the extracted fields
+		Assert.assertEquals(String.valueOf(customResponse.getPatientId()), patientId,
 				"PatientId should match the requested value.");
-		Assert.assertNotNull(results.get("TotalDue"), "TotalDue should not be null.");
+		Assert.assertNotNull(customResponse.getTotalDue(), "TotalDue should not be null.");
 
 		System.out.println("Billing Summary Response:");
 		customResponse.getResponse().prettyPrint();
@@ -290,18 +313,25 @@ public class RestAssured_TestCases_PL1 {
 				"getConsumptionsListOfAPatientById", List.of("given", "then", "extract", "response"));
 		Assert.assertTrue(isValidationSuccessful, "getConsumptionsListOfAPatientById method validation failed.");
 
-		// Validate response
+		// Validate response structure
+		Assert.assertTrue(TestCodeValidator.validateResponseFields("getConsumptionsListOfAPatientById", customResponse),
+				"Must have all required fields in the response.");
+
+		// Validate response status code
 		Assert.assertEquals(customResponse.getStatusCode(), 200, "Status code should be 200.");
 		Assert.assertEquals(customResponse.getStatus(), "OK", "Status should be OK.");
 
-		List<Map<String, Object>> results = customResponse.getListResults();
-		Set<Integer> uniqueIds = new HashSet<>();
-		for (Map<String, Object> result : results) {
-			Assert.assertNotNull(result.get("TotalAmount"), "TotalAmount should not be null.");
-			uniqueIds.add((Integer) result.get("PatientConsumptionId"));
-		}
-		Assert.assertEquals(results.size(), uniqueIds.size(), "PatientConsumptionId values should be unique.");
+		// Validate the extracted fields
+		Assert.assertFalse(customResponse.getItemIds().isEmpty(), "PatientConsumptionIds list should not be empty.");
+		Assert.assertFalse(customResponse.getItemNames().isEmpty(), "ConsumptionReceiptNos list should not be empty.");
+		Assert.assertFalse(customResponse.getGenericNames().isEmpty(), "TotalAmounts list should not be empty.");
 
+		// Check for unique PatientConsumptionIds
+		Set<Object> uniqueIds = new HashSet<>(customResponse.getItemIds());
+		Assert.assertEquals(uniqueIds.size(), customResponse.getItemIds().size(),
+				"PatientConsumptionId values should be unique.");
+
+		// Print the response for debugging
 		System.out.println("Patient Consumptions List Response:");
 		customResponse.getResponse().prettyPrint();
 	}
@@ -317,22 +347,26 @@ public class RestAssured_TestCases_PL1 {
 				"getReturnConsumptionsList", List.of("given", "then", "extract", "response"));
 		Assert.assertTrue(isValidationSuccessful, "getReturnConsumptionsList method validation failed.");
 
-		// Validate response
+		// Validate response structure
+		Assert.assertTrue(TestCodeValidator.validateResponseFields("getReturnConsumptionsList", customResponse),
+				"Must have all required fields in the response.");
+
+		// Validate response status code
 		Assert.assertEquals(customResponse.getStatusCode(), 200, "Status code should be 200.");
 		Assert.assertEquals(customResponse.getStatus(), "OK", "Status should be OK.");
 
 		// Validate unique ConsumptionReturnReceiptNo and non-null PatientId
-		List<Map<String, Object>> results = customResponse.getListResults();
-		Set<Integer> uniqueReceiptNos = new HashSet<>();
-		for (Map<String, Object> result : results) {
-			Integer receiptNo = (Integer) result.get("ConsumptionReturnReceiptNo");
-			Integer patientId = (Integer) result.get("PatientId");
+		List<Object> consumptionReturnReceiptNos = customResponse.getItemIds();
+		List<Object> hospitalNos = customResponse.getItemNames();
+		List<Object> patientIds = customResponse.getGenericNames();
 
-			Assert.assertNotNull(receiptNo, "ConsumptionReturnReceiptNo should not be null.");
-			Assert.assertNotNull(patientId, "PatientId should not be null.");
-			uniqueReceiptNos.add(receiptNo);
+		Set<Object> uniqueReceiptNos = new HashSet<>();
+		for (int i = 0; i < consumptionReturnReceiptNos.size(); i++) {
+			Assert.assertNotNull(consumptionReturnReceiptNos.get(i), "ConsumptionReturnReceiptNo should not be null.");
+			Assert.assertNotNull(patientIds.get(i), "PatientId should not be null.");
+			uniqueReceiptNos.add(consumptionReturnReceiptNos.get(i));
 		}
-		Assert.assertEquals(uniqueReceiptNos.size(), results.size(),
+		Assert.assertEquals(uniqueReceiptNos.size(), consumptionReturnReceiptNos.size(),
 				"ConsumptionReturnReceiptNo values should be unique.");
 
 		System.out.println("Return Consumptions List Response:");
@@ -354,29 +388,31 @@ public class RestAssured_TestCases_PL1 {
 				List.of("given", "then", "extract", "response"));
 		Assert.assertTrue(isValidationSuccessful, "getDischargedPatients method validation failed.");
 
-		// Validate response
+		// Validate response structure
+		Assert.assertTrue(TestCodeValidator.validateResponseFields("getDischargedPatients", customResponse),
+				"Must have all required fields in the response.");
+
+		// Validate response status code
 		Assert.assertEquals(customResponse.getStatusCode(), 200, "Status code should be 200.");
 		Assert.assertEquals(customResponse.getStatus(), "OK", "Status should be OK.");
 
-		// Validate unique PatientVisitId and PatientAdmissionId, and non-null PatientId
-		List<Map<String, Object>> results = customResponse.getListResults();
-		Set<Integer> uniqueVisitIds = new HashSet<>();
-		Set<Integer> uniqueAdmissionIds = new HashSet<>();
+		// Validate unique PatientVisitId and non-null PatientId
+		List<Object> visitCodes = customResponse.getItemIds();
+		List<Object> patientVisitIds = customResponse.getItemNames();
+		List<Object> patientIds = customResponse.getGenericNames();
 
-		for (Map<String, Object> result : results) {
-			Integer visitId = (Integer) result.get("PatientVisitId");
-			Integer admissionId = (Integer) result.get("PatientAdmissionId");
-			Integer patientId = (Integer) result.get("PatientId");
+		Set<Object> uniqueVisitIds = new HashSet<>();
+		Set<Object> uniquePatientIds = new HashSet<>();
 
-			Assert.assertNotNull(visitId, "PatientVisitId should not be null.");
-			Assert.assertNotNull(admissionId, "PatientAdmissionId should not be null.");
-			Assert.assertNotNull(patientId, "PatientId should not be null.");
-
-			uniqueVisitIds.add(visitId);
-			uniqueAdmissionIds.add(admissionId);
+		for (int i = 0; i < patientVisitIds.size(); i++) {
+			Assert.assertNotNull(patientVisitIds.get(i), "PatientVisitId should not be null.");
+			Assert.assertNotNull(patientIds.get(i), "PatientId should not be null.");
+			uniqueVisitIds.add(patientVisitIds.get(i));
+			uniquePatientIds.add(patientIds.get(i));
 		}
-		Assert.assertEquals(uniqueVisitIds.size(), results.size(), "PatientVisitId values should be unique.");
-		Assert.assertEquals(uniqueAdmissionIds.size(), results.size(), "PatientAdmissionId values should be unique.");
+
+		Assert.assertEquals(uniqueVisitIds.size(), patientVisitIds.size(), "PatientVisitId values should be unique.");
+		Assert.assertEquals(uniquePatientIds.size(), patientIds.size(), "PatientId values should be unique.");
 
 		System.out.println("Discharged Patients Response:");
 		customResponse.getResponse().prettyPrint();
@@ -385,39 +421,46 @@ public class RestAssured_TestCases_PL1 {
 	@Test(priority = 11, groups = { "PL1" }, description = "Retrieve and validate the list of admitted patients.")
 	public void getAdmittedPatientsTest() throws IOException {
 		apiUtil = new ApiUtil();
+		String fromDate = "2020-01-01";
+		String toDate = "2024-11-19";
 
-		CustomResponse customResponse = apiUtil.getAdmittedPatients("/IpBilling/AdmittedPatients", null);
+		CustomResponse customResponse = apiUtil.getAdmittedPatients(
+				"/IpBilling/AdmittedPatients?admissionStatus=admitted&FromDate=" + fromDate + "&ToDate=" + toDate,
+				null);
 
 		// Validate method implementation
 		boolean isValidationSuccessful = TestCodeValidator.validateTestMethodFromFile(FILEPATH, "getAdmittedPatients",
 				List.of("given", "then", "extract", "response"));
 		Assert.assertTrue(isValidationSuccessful, "getAdmittedPatients method validation failed.");
 
-		// Validate response
+		// Validate response structure
+		Assert.assertTrue(TestCodeValidator.validateResponseFields("getAdmittedPatients", customResponse),
+				"Must have all required fields in the response.");
+
+		// Validate response status code
 		Assert.assertEquals(customResponse.getStatusCode(), 200, "Status code should be 200.");
 		Assert.assertEquals(customResponse.getStatus(), "OK", "Status should be OK.");
 
-		// Extract results
-		List<Map<String, Object>> results = customResponse.getListResults();
-		Set<Integer> uniquePatientIds = new HashSet<>();
-		Set<Integer> uniqueVisitIds = new HashSet<>();
+		// Validate unique PatientId and VisitId, and non-null DischargeDate should be
+		// null for admitted patients
+		List<Object> patientIds = customResponse.getItemIds();
+		List<Object> visitIds = customResponse.getItemNames();
+		List<Object> dischargeDates = customResponse.getGenericNames();
 
-		for (Map<String, Object> result : results) {
-			Integer patientId = (Integer) result.get("PatientId");
-			Integer visitId = (Integer) result.get("VisitId");
-			Object dischargeDate = result.get("DischargeDate");
+		Set<Object> uniquePatientIds = new HashSet<>();
+		Set<Object> uniqueVisitIds = new HashSet<>();
 
-			Assert.assertNotNull(patientId, "PatientId should not be null.");
-			Assert.assertNotNull(visitId, "VisitId should not be null.");
-			Assert.assertNull(dischargeDate, "DischargeDate should be null for admitted patients.");
+		for (int i = 0; i < patientIds.size(); i++) {
+			Assert.assertNotNull(patientIds.get(i), "PatientId should not be null.");
+			Assert.assertNotNull(visitIds.get(i), "VisitId should not be null.");
+			Assert.assertNull(dischargeDates.get(i), "DischargeDate should be null for admitted patients.");
 
-			uniquePatientIds.add(patientId);
-			uniqueVisitIds.add(visitId);
+			uniquePatientIds.add(patientIds.get(i));
+			uniqueVisitIds.add(visitIds.get(i));
 		}
 
-		// Validate uniqueness
-		Assert.assertEquals(uniquePatientIds.size(), results.size(), "PatientId values should be unique.");
-		Assert.assertEquals(uniqueVisitIds.size(), results.size(), "VisitId values should be unique.");
+		Assert.assertEquals(uniquePatientIds.size(), patientIds.size(), "PatientId values should be unique.");
+		Assert.assertEquals(uniqueVisitIds.size(), visitIds.size(), "VisitId values should be unique.");
 
 		System.out.println("Admitted Patients Response:");
 		customResponse.getResponse().prettyPrint();
@@ -436,17 +479,32 @@ public class RestAssured_TestCases_PL1 {
 				"searchIpdPatientByPatientId", List.of("given", "then", "extract", "response"));
 		Assert.assertTrue(isValidationSuccessful, "searchIpdPatientByPatientId method validation failed.");
 
-		// Validate response
+		// Validate response structure
+		Assert.assertTrue(TestCodeValidator.validateResponseFields("searchIpdPatientByPatientId", customResponse),
+				"Must have all required fields in the response.");
+
+		// Validate response status code
 		Assert.assertEquals(customResponse.getStatusCode(), 200, "Status code should be 200.");
 		Assert.assertEquals(customResponse.getStatus(), "OK", "Status should be OK.");
 
-		// Extract results
-		List<Map<String, Object>> results = customResponse.getListResults();
+		// Validate non-null PatientId and PatientCode
+		List<Object> patientIds = customResponse.getPatientIds();
+		List<Object> patientCodes = customResponse.getPatientCodes();
 
-		for (Map<String, Object> result : results) {
-			Assert.assertNotNull(result.get("PatientId"), "PatientId should not be null.");
-			Assert.assertNotNull(result.get("PatientCode"), "PatientCode should not be null.");
+		Set<Object> uniquePatientIds = new HashSet<>();
+		Set<Object> uniquePatientCodes = new HashSet<>();
+
+		for (int i = 0; i < patientIds.size(); i++) {
+			Assert.assertNotNull(patientIds.get(i), "PatientId should not be null.");
+			Assert.assertNotNull(patientCodes.get(i), "PatientCode should not be null.");
+
+			uniquePatientIds.add(patientIds.get(i));
+			uniquePatientCodes.add(patientCodes.get(i));
 		}
+
+		// Check uniqueness of PatientId and PatientCode
+		Assert.assertEquals(uniquePatientIds.size(), patientIds.size(), "PatientId values should be unique.");
+		Assert.assertEquals(uniquePatientCodes.size(), patientCodes.size(), "PatientCode values should be unique.");
 
 		System.out.println("IPD Patients Response:");
 		customResponse.getResponse().prettyPrint();
@@ -463,17 +521,32 @@ public class RestAssured_TestCases_PL1 {
 				"getPatientProvisionalInfo", List.of("given", "then", "extract", "response"));
 		Assert.assertTrue(isValidationSuccessful, "getPatientProvisionalInfo method validation failed.");
 
-		// Validate response
+		// Validate response structure
+		Assert.assertTrue(TestCodeValidator.validateResponseFields("getPatientProvisionalInfo", customResponse),
+				"Must have all required fields in the response.");
+
+		// Validate response status code
 		Assert.assertEquals(customResponse.getStatusCode(), 200, "Status code should be 200.");
 		Assert.assertEquals(customResponse.getStatus(), "OK", "Status should be OK.");
 
-		// Extract results
-		List<Map<String, Object>> results = customResponse.getListResults();
+		// Validate non-null PatientId and PatientCode
+		List<Object> patientIds = customResponse.getPatientIds();
+		List<Object> patientCodes = customResponse.getPatientCodes();
 
-		for (Map<String, Object> result : results) {
-			Assert.assertNotNull(result.get("PatientId"), "PatientId should not be null.");
-			Assert.assertNotNull(result.get("PatientCode"), "PatientCode should not be null.");
+		Set<Object> uniquePatientIds = new HashSet<>();
+		Set<Object> uniquePatientCodes = new HashSet<>();
+
+		for (int i = 0; i < patientIds.size(); i++) {
+			Assert.assertNotNull(patientIds.get(i), "PatientId should not be null.");
+			Assert.assertNotNull(patientCodes.get(i), "PatientCode should not be null.");
+
+			uniquePatientIds.add(patientIds.get(i));
+			uniquePatientCodes.add(patientCodes.get(i));
 		}
+
+		// Check uniqueness of PatientId and PatientCode
+		Assert.assertEquals(uniquePatientIds.size(), patientIds.size(), "PatientId values should be unique.");
+		Assert.assertEquals(uniquePatientCodes.size(), patientCodes.size(), "PatientCode values should be unique.");
 
 		System.out.println("Provisional Information Response:");
 		customResponse.getResponse().prettyPrint();
@@ -496,7 +569,11 @@ public class RestAssured_TestCases_PL1 {
 		Assert.assertTrue(isValidationSuccessful,
 				"getProvisionalItemsListByPatientIdAndSchemeId method validation failed.");
 
-		// Validate response
+		// Validate response structure
+		Assert.assertTrue(TestCodeValidator.validateResponseFields("getProvisionalItemsListByPatientIdAndSchemeId",
+				customResponse), "Must have all required fields in the response.");
+
+		// Validate response status code
 		Assert.assertEquals(customResponse.getStatusCode(), 200, "Status code should be 200.");
 		Assert.assertEquals(customResponse.getStatus(), "OK", "Status should be OK.");
 
@@ -505,7 +582,7 @@ public class RestAssured_TestCases_PL1 {
 		Assert.assertNotNull(provisionalItems, "ProvisionalItems list should not be null.");
 		Assert.assertTrue(provisionalItems.size() > 0, "ProvisionalItems list should not be empty.");
 
-		// Validate PatientId consistency
+		// Validate PatientId consistency in ProvisionalItems
 		for (Map<String, Object> item : provisionalItems) {
 			Assert.assertEquals(item.get("PatientId"), Integer.parseInt(patientId),
 					"PatientId in ProvisionalItems should match the requested PatientId.");
@@ -532,22 +609,30 @@ public class RestAssured_TestCases_PL1 {
 				"getInvoicesByDateRange", List.of("given", "then", "extract", "response"));
 		Assert.assertTrue(isValidationSuccessful, "getInvoicesByDateRange method validation failed.");
 
-		// Validate response
+		// Validate response structure
+		Assert.assertTrue(TestCodeValidator.validateResponseFields("getInvoicesByDateRange", customResponse),
+				"Must have all required fields in the response.");
+
+		// Validate response status code
 		Assert.assertEquals(customResponse.getStatusCode(), 200, "Status code should be 200.");
 		Assert.assertEquals(customResponse.getStatus(), "OK", "Status should be OK.");
 
 		// Extract and validate results
-		List<Map<String, Object>> invoices = customResponse.getListResults();
-		Assert.assertNotNull(invoices, "Results array should not be null.");
-		Assert.assertTrue(invoices.size() > 0, "Results array should contain at least one invoice.");
+		List<Object> invoiceNumbers = customResponse.getPatientIds();
+		List<Object> invoiceCodes = customResponse.getPatientCodes();
 
-		// Validate InvoiceNumber and InvoiceCode fields
-		for (Map<String, Object> invoice : invoices) {
-			Assert.assertNotNull(invoice.get("InvoiceNumber"), "InvoiceNumber should not be null.");
-			Assert.assertNotNull(invoice.get("InvoiceCode"), "InvoiceCode should not be null.");
+		Set<Object> uniqueInvoiceNumbers = new HashSet<>();
+		Set<Object> uniqueInvoiceCodes = new HashSet<>();
+
+		// Validate non-null InvoiceNumber and InvoiceCode
+		for (int i = 0; i < invoiceNumbers.size(); i++) {
+			Assert.assertNotNull(invoiceNumbers.get(i), "InvoiceNumber should not be null.");
+			Assert.assertNotNull(invoiceCodes.get(i), "InvoiceCode should not be null.");
+
+			uniqueInvoiceNumbers.add(invoiceNumbers.get(i));
+			uniqueInvoiceCodes.add(invoiceCodes.get(i));
 		}
 
-		// Print the response
 		System.out.println("Billing Invoices Response:");
 		customResponse.getResponse().prettyPrint();
 	}
@@ -564,22 +649,34 @@ public class RestAssured_TestCases_PL1 {
 				List.of("given", "then", "extract", "response"));
 		Assert.assertTrue(isValidationSuccessful, "getProviderList method validation failed.");
 
-		// Validate response
+		// Validate response structure
+		Assert.assertTrue(TestCodeValidator.validateResponseFields("getProviderList", customResponse),
+				"Must have all required fields in the response.");
+
+		// Validate response status code
 		Assert.assertEquals(customResponse.getStatusCode(), 200, "Status code should be 200.");
 		Assert.assertEquals(customResponse.getStatus(), "OK", "Status should be OK.");
 
 		// Extract and validate results
-		List<Map<String, Object>> providers = customResponse.getListResults();
-		Assert.assertNotNull(providers, "Results array should not be null.");
-		Assert.assertTrue(providers.size() > 0, "Results array should contain at least one provider.");
+		List<Object> employeeIds = customResponse.getPatientIds();
+		List<Object> employeeNames = customResponse.getPatientCodes();
 
-		// Validate EmployeeId and EmployeeName fields
-		for (Map<String, Object> provider : providers) {
-			Assert.assertNotNull(provider.get("EmployeeId"), "EmployeeId should not be null.");
-			Assert.assertNotNull(provider.get("EmployeeName"), "EmployeeName should not be null.");
+		Set<Object> uniqueEmployeeIds = new HashSet<>();
+		Set<Object> uniqueEmployeeNames = new HashSet<>();
+
+		// Validate non-null EmployeeId and EmployeeName
+		for (int i = 0; i < employeeIds.size(); i++) {
+			Assert.assertNotNull(employeeIds.get(i), "EmployeeId should not be null.");
+			Assert.assertNotNull(employeeNames.get(i), "EmployeeName should not be null.");
+
+			uniqueEmployeeIds.add(employeeIds.get(i));
+			uniqueEmployeeNames.add(employeeNames.get(i));
 		}
 
-		// Print the response
+		// Check uniqueness of EmployeeId and EmployeeName
+		Assert.assertEquals(uniqueEmployeeIds.size(), employeeIds.size(), "EmployeeId values should be unique.");
+		Assert.assertEquals(uniqueEmployeeNames.size(), employeeNames.size(), "EmployeeName values should be unique.");
+
 		System.out.println("Providers List Response:");
 		customResponse.getResponse().prettyPrint();
 	}
@@ -592,31 +689,42 @@ public class RestAssured_TestCases_PL1 {
 		CustomResponse customResponse = apiUtil.getUsersList("/Billing/ListUsers", null);
 
 		// Validate method implementation
-		boolean isValidationSuccessful = TestCodeValidator.validateTestMethodFromFile(FILEPATH, "getUserslist",
+		boolean isValidationSuccessful = TestCodeValidator.validateTestMethodFromFile(FILEPATH, "getUsersList",
 				List.of("given", "then", "extract", "response"));
-//		Assert.assertTrue(isValidationSuccessful, "getUserslist method validation failed.");
+		Assert.assertTrue(isValidationSuccessful, "getUsersList method validation failed.");
 
-		// Validate response
+		// Validate response structure
+		Assert.assertTrue(TestCodeValidator.validateResponseFields("getUsersList", customResponse),
+				"Must have all required fields in the response.");
+
+		// Validate response status code
 		Assert.assertEquals(customResponse.getStatusCode(), 200, "Status code should be 200.");
 		Assert.assertEquals(customResponse.getStatus(), "OK", "Status should be OK.");
 
 		// Extract and validate results
-		List<Map<String, Object>> users = customResponse.getListResults();
-		Assert.assertNotNull(users, "Results array should not be null.");
-		Assert.assertTrue(users.size() > 0, "Results array should contain at least one user.");
+		List<Object> userIds = customResponse.getItemIds();
+		List<Object> shortNames = customResponse.getItemNames();
+		List<Object> departmentNames = customResponse.getGenericNames();
 
-		// Validate UserId, ShortName, and DepartmentName fields
-		Set<Integer> userIds = new HashSet<>();
-		for (Map<String, Object> user : users) {
-			Integer userId = (Integer) user.get("UserId");
-			Assert.assertNotNull(userId, "UserId should not be null.");
-			Assert.assertTrue(userIds.add(userId), "UserId " + userId + " is not unique.");
+		Set<Object> uniqueUserIds = new HashSet<>();
+		Set<Object> uniqueShortNames = new HashSet<>();
+		Set<Object> uniqueDepartmentNames = new HashSet<>();
 
-			Assert.assertNotNull(user.get("ShortName"), "ShortName should not be null.");
-			Assert.assertNotNull(user.get("DepartmentName"), "DepartmentName should not be null.");
+		// Validate non-null UserId, ShortName, and DepartmentName
+		for (int i = 0; i < userIds.size(); i++) {
+			Assert.assertNotNull(userIds.get(i), "UserId should not be null.");
+			Assert.assertNotNull(shortNames.get(i), "ShortName should not be null.");
+			Assert.assertNotNull(departmentNames.get(i), "DepartmentName should not be null.");
+
+			uniqueUserIds.add(userIds.get(i));
+			uniqueShortNames.add(shortNames.get(i));
+			uniqueDepartmentNames.add(departmentNames.get(i));
 		}
 
-		// Print the response
+		// Check uniqueness of UserId, ShortName, and DepartmentName
+		Assert.assertEquals(uniqueUserIds.size(), userIds.size(), "UserId values should be unique.");
+		Assert.assertEquals(uniqueShortNames.size(), shortNames.size(), "ShortName values should be unique.");
+
 		System.out.println("Users List Response:");
 		customResponse.getResponse().prettyPrint();
 	}
@@ -633,20 +741,25 @@ public class RestAssured_TestCases_PL1 {
 				"getCurrentFiscalYearDetails", List.of("given", "then", "extract", "response"));
 		Assert.assertTrue(isValidationSuccessful, "getCurrentFiscalYearDetails method validation failed.");
 
-		// Validate response
+		// Validate response structure
+		Assert.assertTrue(TestCodeValidator.validateResponseFields("getCurrentFiscalYearDetails", customResponse),
+				"Must have all required fields in the response.");
+
+		// Validate response status code
 		Assert.assertEquals(customResponse.getStatusCode(), 200, "Status code should be 200.");
 		Assert.assertEquals(customResponse.getStatus(), "OK", "Status should be OK.");
 
 		// Extract and validate results
-		Map<String, Object> results = customResponse.getMapResults();
-		Assert.assertNotNull(results, "Results object should not be null.");
+		Object fiscalYearId = customResponse.getPatientId();
+		Object fiscalYearName = customResponse.getTotalDue();
 
 		// Validate FiscalYearId and FiscalYearName fields
-		Assert.assertNotNull(results.get("FiscalYearId"), "FiscalYearId should not be null.");
-		Assert.assertNotNull(results.get("FiscalYearName"), "FiscalYearName should not be null.");
+		Assert.assertNotNull(fiscalYearId, "FiscalYearId should not be null.");
+		Assert.assertNotNull(fiscalYearName, "FiscalYearName should not be null.");
 
 		// Print the response
 		System.out.println("Current Fiscal Year Response:");
 		customResponse.getResponse().prettyPrint();
 	}
+
 }
