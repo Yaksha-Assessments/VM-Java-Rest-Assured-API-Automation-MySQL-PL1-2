@@ -3,19 +3,21 @@
 <suite parallel="classes" name="Suite" thread-count="5">
 	<groups>
 		<run>
-			<include name="PL1" />
+			<include name="PL2" />
 		</run>
 	</groups>
 
 	<listeners>
-		<listener class-name="coreUtilities.testlisteners.TestListener" />
-		<listener class-name="coreUtilities.testlisteners.RetryListener" />
+		<listener
+			class-name="coreUtilities.testlisteners.TestListener" />
+		<listener
+			class-name="coreUtilities.testlisteners.RetryListener" />
 	</listeners>
 	<test name="Test">
 		<parameter name="browser" value="chrome" />
 		<parameter name="environment" value="dev" />
 		<classes>
-			<class name="testcases.RestAssured_TestCases_PL1" />
+			<class name="testcases.RestAssured_TestCases_PL2" />
 		</classes>
 	</test> <!-- Test -->
 </suite> <!-- Suite -->

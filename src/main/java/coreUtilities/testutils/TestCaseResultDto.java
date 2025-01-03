@@ -10,8 +10,6 @@ public class TestCaseResultDto {
 	private Boolean isMandatory;
 	private String erroMessage;
 
-	
-	
 	public TestCaseResultDto(String methodName, String methodType, int actualScore, int earnedScore, String status,
 			Boolean isMandatory, String erroMessage) {
 		super();

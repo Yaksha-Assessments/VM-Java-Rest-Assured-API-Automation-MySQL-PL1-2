@@ -10,15 +10,15 @@
     <parameter name="browser" value="chrome"/>
     <groups>
       <run>
-        <include name="PL1"/>
+        <include name="PL2"/>
       </run>
     </groups>
     <classes>
-      <class name="testcases.RestAssured_TestCases_PL1">
+      <class name="testcases.RestAssured_TestCases_PL2">
         <methods>
-          <include name="getUsersListTest"/>
+          <include name="GetSignatoriesByDepartment"/>
         </methods>
-      </class> <!-- testcases.RestAssured_TestCases_PL1 -->
+      </class> <!-- testcases.RestAssured_TestCases_PL2 -->
     </classes>
   </test> <!-- Test(failed) -->
 </suite> <!-- Failed suite [Suite] -->

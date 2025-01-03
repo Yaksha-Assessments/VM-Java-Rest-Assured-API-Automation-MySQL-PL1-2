@@ -49,7 +49,6 @@ public class TestUtils {
 
 		testResult = "";
 
-
 		businessTestFile = new File("./output_revised.txt");
 		businessTestFile.delete();
 
@@ -93,64 +92,56 @@ public class TestUtils {
 			testCaseResults.put(GUID,
 					new TestCaseResultDto(testName, testType, 1, resultScore, resultStatus, true, ""));
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 			System.out.println(e.getMessage());
 		}
 		testResults.setTestCaseResults(asJsonString(testCaseResults));
 		testResults.setCustomData(customData);
 
-		
-try {
+		try {
 
-	URL url = new URL(URL);
-	HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-	conn.setDoOutput(true);
-	conn.setRequestMethod("POST");
-	conn.setRequestProperty("Content-Type", "application/json");
+			URL url = new URL(URL);
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setDoOutput(true);
+			conn.setRequestMethod("POST");
+			conn.setRequestProperty("Content-Type", "application/json");
 
 //	String input = "{\"qty\":100,\"name\":\"iPad 4\"}";
-	String input = asJsonString(testResults);
-	OutputStream os = conn.getOutputStream();
-	os.write(input.getBytes());
-	os.flush();
+			String input = asJsonString(testResults);
+			OutputStream os = conn.getOutputStream();
+			os.write(input.getBytes());
+			os.flush();
 
-	
-	BufferedReader br = new BufferedReader(new InputStreamReader(
-			(conn.getInputStream())));
+			BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
 
-	String output;
-	while ((output = br.readLine()) != null) {
-		System.out.println(output);
-	}
+			String output;
+			while ((output = br.readLine()) != null) {
+				System.out.println(output);
+			}
 
-	conn.disconnect();
+			conn.disconnect();
 
-  } catch (MalformedURLException e) {
+		} catch (MalformedURLException e) {
 
-	e.printStackTrace();
+			e.printStackTrace();
 
-  } catch (IOException e) {
+		} catch (IOException e) {
 
-	e.printStackTrace();
+			e.printStackTrace();
 
- }	
-
+		}
 
 		total++;
 		String[] r = testName.split("(?=\\p{Upper})");
 		System.out.print("\n" + BLUE_BOLD_BRIGHT + "=>");
-		
 
 		System.out.print(BLUE_BOLD_BRIGHT + "Test For : ");
-		
 
-		
-			System.out.print(BLUE_BOLD_BRIGHT + testName);
-			
-		
+		System.out.print(BLUE_BOLD_BRIGHT + testName);
+
 		System.out.print(" : ");
-		
+
 		if (result.toString().equals("true")) {
 			System.out.println(GREEN_BOLD_BRIGHT + "PASSED" + TEXT_RESET);
 			passed++;
@@ -162,14 +153,12 @@ try {
 
 	public static void testReport() {
 
-		 System.out.print("\n" + BLUE_BOLD_BRIGHT + "TEST CASES EVALUATED : " + total
-		 + TEXT_RESET);
-		 System.out.print("\n" + GREEN_BOLD_BRIGHT + "PASSED : " + passed +
-		 TEXT_RESET);
-		 System.out.println("\n" + RED_BOLD_BRIGHT + "FAILED : " + failed +
-		 TEXT_RESET);
+		System.out.print("\n" + BLUE_BOLD_BRIGHT + "TEST CASES EVALUATED : " + total + TEXT_RESET);
+		System.out.print("\n" + GREEN_BOLD_BRIGHT + "PASSED : " + passed + TEXT_RESET);
+		System.out.println("\n" + RED_BOLD_BRIGHT + "FAILED : " + failed + TEXT_RESET);
 
 	}
+
 	public static String currentTest() {
 		return Thread.currentThread().getStackTrace()[2].getMethodName();
 	}
@@ -181,7 +170,7 @@ try {
 		try {
 			jsonString = mapper.writeValueAsString(obj);
 		} catch (JsonProcessingException e) {
-			
+
 			e.printStackTrace();
 		}
 		return jsonString;
@@ -189,4 +178,3 @@ try {
 	}
 
 }
-
